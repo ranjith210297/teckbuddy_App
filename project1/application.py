@@ -1,6 +1,7 @@
 import os
+import sys
 
-from flask import Flask, session, render_template
+from flask import Flask, session, render_template, request
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -28,3 +29,17 @@ def index():
 @app.route("/register")
 def register():
 	return render_template("registration.html")
+
+
+@app.route("/userDetails", methods = ["POST"])
+def userDetails():
+	username = request.form.get("uname")
+	email = request.form.get("email")
+	gender = request.form.get("gender")
+	print(username, file=sys.stderr)
+	print(email, file=sys.stderr)
+	print(gender, file=sys.stderr)
+
+	return render_template("userDetails.html", user=username, user_email=email, user_gender=gender)
+	
+
