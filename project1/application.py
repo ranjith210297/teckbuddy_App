@@ -28,14 +28,19 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 Session(app)
 db.init_app(app)
 
-# with app.app_context():
-# 	db.create_all()
+with app.app_context():
+	db.create_all()
 
 
 
 @app.route("/register")
 def register():
 	return render_template("registration.html")
+
+@app.route("/admin")
+def allusers():
+	users=User.query.all()
+	return render_template("admin.html",users=users)
 
 @app.route("/userDetails", methods=["POST", "GET"])
 def userDetails():
@@ -55,5 +60,6 @@ def userDetails():
 			db.session.add(user)
 			db.session.commit()
 			session[username] = request.form['uname']
-			return render_template("userDetails.html",username = Username)
+			return render_template("userDetails.html")
 	return render_template("errorpage.html")
+
