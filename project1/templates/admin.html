@@ -37,12 +37,12 @@
             </thead>
             <tbody>
 
-                {% for user in users %}
+                {% for row in users %}
                 <tr>
                     <th scope="row"> {{ loop.index }} </th>
-                    <td>{{user.username}}</td>
-                    <td>{{user.password}}</td>
-                    <td>{{user.time_registered}}</td>
+                    <td>{{row.Username}}</td>
+                    <td>{{row.Password}}</td>
+                    <td>{{row.Time_registered}}</td>
                 </tr>
                 {% endfor %}
 

@@ -37,10 +37,15 @@ with app.app_context():
 def register():
 	return render_template("registration.html")
 
+
 @app.route("/admin")
 def allusers():
-	users=User.query.all()
-	return render_template("admin.html",users=users)
+    user = User.query.order_by(User.Time_registered).all()
+    for i in user:
+    	print(i.Username,i.Password,i.Time_registered)
+
+    return render_template("admin.html", users=user)
+
 
 @app.route("/userDetails", methods=["POST", "GET"])
 def userDetails():
