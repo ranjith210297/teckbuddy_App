@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="D:\MSIT\GIT_REPOS\project-1-2019501102\project1\static/registration_css.css">
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='registration_css.css') }}">
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+  </script>
+
+
+</head>
+<body> 
+ <div class="container">
+    <div class = "heading1"
+        <h1>Register</h1>
+    </div>
+    <p>Please fill in this form to create an account.</p>
+    <hr>
+
+  <div class="container" id="main">
+    <div class="registration">
+      <form>
+        <p style="color:red;">{{ message }}</p>
+        <label for="uname">UserName</label><br />
+        <input type="text" id="uname" name="uname" /><br />
+        <label for="email">Email ID</label><br />
+        <input type="text" id="email" name="email" /><br />
+        <input type="radio" id="male" name="gender" value="male" />
+        <label for="male">Male</label>
+        <input type="radio" id="female" name="gender" value="female" /> 
+        <label for="female">Female</label><br />
+        <br>
+        <label for="pwd">Password</label><br />
+        <input type="text" id="pwd" name="pwd" /><br />
+        <label for="cpwd">Confirm Password</label><br />
+        <input type="text" id="cpwd" name="cpwd" /><br />
+
+              
+        
+
+          <div class = "wrapper">
+        <button type="submit"  class = registerbtn formmethod="POST"
+          formaction="{{ url_for('userDetails') }}">Register</button>
+
+          <button type="submit"  class = loginbtn formmethod="POST"
+          formaction="{{ url_for('auth') }}">Login</button>
+
+          
+
+        </div>
+
+
+          
+
+        <div class="container signin">
+    <p>Already have an account? Please Login</a>.</p>
+        </div>
+
+
+      </form>
+    </div>
+  </div>
+
+
+  </div>
+  
+  
+
+
+</body>
+</html>
