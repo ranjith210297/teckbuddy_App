@@ -2,7 +2,7 @@ import os
 import sys
 import time
 
-from flask import Flask, render_template, request, url_for,flash,session
+from flask import Flask, render_template, request, url_for,flash,session,redirect
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, desc
@@ -31,6 +31,12 @@ db.init_app(app)
 with app.app_context():
 	db.create_all()
 
+
+@app.route("/")
+def index():
+	if 'Username' in session:
+		return redirect(url_for('home'))
+	return redirect(url_for('register'))
 
 
 @app.route("/register")
@@ -87,12 +93,23 @@ def auth():
             if userData.Username == username and userData.Password == passwd:
                 session[username] = username
                 return render_template('userHome.html', user=username)
-            # if user verification fails
             else:
                 return render_template("registration.html", message="username/password is incorrect!!")
-        # if user doesn't exists.
         else:
             return render_template("registration.html", message="Account doesn't exists, Please register!")
-    # if try to access directly
     else:
         return "<h1>Please login/register instead.</h1>"
+
+
+
+@app.route("/logout")
+def logout():
+    session.pop('Username', None)
+    return redirect(url_for('index'))
+
+
+@app.route("/home/<Username>")
+def userHome(Username):
+    if Username in session:
+        return render_template("userDetails.html", username=Username, message="Successfully logged in.", heading="Welcome back")
+    return redirect(url_for('index'))
