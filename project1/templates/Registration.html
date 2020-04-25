@@ -35,15 +35,15 @@
         <label for="female">Female</label><br />
         <br>
         <label for="pwd">Password</label><br />
-        <input type="text" id="pwd" name="pwd" /><br />
+        <input type="password" id="pwd" name="password" /><br />
         <label for="cpwd">Confirm Password</label><br />
-        <input type="text" id="cpwd" name="cpwd" /><br />
+        <input type="password" id="cpwd" name="password" /><br />
 
         
         
 
         <button type="submit"  class = registerbtn formmethod="POST"
-          formaction="{{ url_for('userDetails') }}">Register</button>
+          formaction="{{ url_for('register') }}">Register</button>
 
         <div class="container signin">
     <p>Already have an account? <a href="login.html">Sign in</a>.</p>

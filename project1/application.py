@@ -32,10 +32,35 @@ with app.app_context():
 	db.create_all()
 
 
+@app.route("/")
+def reroute():
+	return render_template("Registration.html")
 
-@app.route("/register")
+@app.route("/register",methods=["POST","GET"])
 def register():
-	return render_template("registration.html")
+	if request.method == "GET":
+		return render_template("registration.html")
+	elif(request.method == "POST"):
+		db.create_all()
+		username = request.form.get("uname")
+		email = request.form.get("email")
+		gender = request.form.get("gender")
+		password = request.form.get("pwd")
+		cpassword = request.form.get("cpwd")
+		userData = User.query.filter_by(Email=email).first()
+		if userData is not None:
+			return render_template("Registration.html", message="email already exists, Please login.")
+		else:
+			user = User(Username=username,
+                        Email=email, Gender=gender,Password=password,Cpassword=cpassword, Time_registered=time.ctime(time.time()))
+			db.session.add(user)
+			db.session.commit()
+			session[username] = request.form['uname']
+			return render_template("userDetails.html")
+	else:
+
+		return render_template("errorpage.html")
+
 
 
 @app.route("/admin")
@@ -47,24 +72,24 @@ def allusers():
     return render_template("admin.html", users=user)
 
 
-@app.route("/userDetails", methods=["POST", "GET"])
-def userDetails():
-	db.create_all()
-	if request.method == "POST":
-		username = request.form.get("uname")
-		email = request.form.get("email")
-		gender = request.form.get("gender")
-		password = request.form.get("pwd")
-		cpassword = request.form.get("cpwd")
-		userData = User.query.filter_by(Email=email).first()
-		if userData is not None:
-			return render_template("registration.html", message="email already exists, Please login.")
-		else:
-			user = User(Username=username,
-                        Email=email, Gender=gender,Password=password,Cpassword=cpassword, Time_registered=time.ctime(time.time()))
-			db.session.add(user)
-			db.session.commit()
-			session[username] = request.form['uname']
-			return render_template("userDetails.html")
-	return render_template("errorpage.html")
+# @app.route("/userDetails", methods=["POST", "GET"])
+# def userDetails():
+# 	db.create_all()
+# 	if request.method == "POST":
+# 		username = request.form.get("uname")
+# 		email = request.form.get("email")
+# 		gender = request.form.get("gender")
+# 		password = request.form.get("pwd")
+# 		cpassword = request.form.get("cpwd")
+# 		userData = User.query.filter_by(Email=email).first()
+# 		if userData is not None:
+# 			return render_template("registration.html", message="email already exists, Please login.")
+# 		else:
+# 			user = User(Username=username,
+#                         Email=email, Gender=gender,Password=password,Cpassword=cpassword, Time_registered=time.ctime(time.time()))
+# 			db.session.add(user)
+# 			db.session.commit()
+# 			session[username] = request.form['uname']
+# 			return render_template("userDetails.html")
+# 	return render_template("errorpage.html")
 
