@@ -34,14 +34,14 @@ with app.app_context():
 
 @app.route("/")
 def reroute():
-	return render_template("Registration.html")
+	return redirect(url_for("Registration.html"))
 
 @app.route("/register",methods=["POST","GET"])
 def register():
 	if request.method == "GET":
 		return render_template("registration.html")
 	elif(request.method == "POST"):
-		db.create_all()
+		
 		username = request.form.get("uname")
 		email = request.form.get("email")
 		gender = request.form.get("gender")
@@ -66,30 +66,7 @@ def register():
 @app.route("/admin")
 def allusers():
     user = User.query.order_by(User.Time_registered).all()
-    for i in user:
-    	print(i.Username,i.Password,i.Time_registered)
-
+    
     return render_template("admin.html", users=user)
 
-
-# @app.route("/userDetails", methods=["POST", "GET"])
-# def userDetails():
-# 	db.create_all()
-# 	if request.method == "POST":
-# 		username = request.form.get("uname")
-# 		email = request.form.get("email")
-# 		gender = request.form.get("gender")
-# 		password = request.form.get("pwd")
-# 		cpassword = request.form.get("cpwd")
-# 		userData = User.query.filter_by(Email=email).first()
-# 		if userData is not None:
-# 			return render_template("registration.html", message="email already exists, Please login.")
-# 		else:
-# 			user = User(Username=username,
-#                         Email=email, Gender=gender,Password=password,Cpassword=cpassword, Time_registered=time.ctime(time.time()))
-# 			db.session.add(user)
-# 			db.session.commit()
-# 			session[username] = request.form['uname']
-# 			return render_template("userDetails.html")
-# 	return render_template("errorpage.html")
 

@@ -3,6 +3,7 @@ import time
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from passlib.hash import bcrypt
 
 
 
@@ -21,7 +22,7 @@ class User(db.Model):
 		self.Username=Username
 		self.Email = Email
 		self.Gender=Gender
-		self.Password = Password
+		self.Password = bcrypt.encrypt(Password)
 		self.Cpassword = Cpassword
 		self.Time_registered = datetime.now()
 	
