@@ -34,14 +34,39 @@ with app.app_context():
 
 @app.route("/")
 def index():
-	if 'Username' in session:
+	if 'username' in session:
 		return redirect(url_for('home'))
 	return redirect(url_for('register'))
 
 
-@app.route("/register")
+
+@app.route("/register",methods=["POST","GET"])
 def register():
-	return render_template("registration.html")
+	if request.method == "GET":
+		return render_template("Registration.html")
+	elif(request.method == "POST"):
+		
+		username = request.form.get("uname")
+		email = request.form.get("email")
+		gender = request.form.get("gender")
+		password = request.form.get("pwd")
+		cpassword = request.form.get("cpwd")
+		userData = User.query.filter_by(Email=email).first()
+		if userData is not None:
+			return render_template("Registration.html", message="email already exists, Please login.")
+		else:
+			user = User(Username=username,
+                        Email=email, Gender=gender,Password=password,Cpassword=cpassword, Time_registered=time.ctime(time.time()))
+			db.session.add(user)
+			db.session.commit()
+			session[username] = request.form['uname']
+			return render_template("userDetails.html")
+	else:
+
+		return render_template("errorpage.html")
+
+
+
 
 
 @app.route("/login")
@@ -52,32 +77,10 @@ def login():
 @app.route("/admin")
 def allusers():
     user = User.query.order_by(User.Time_registered).all()
-    for i in user:
-    	print(i.Username,i.Password,i.Time_registered)
-
+    
     return render_template("admin.html", users=user)
 
 
-@app.route("/userDetails", methods=["POST", "GET"])
-def userDetails():
-	db.create_all()
-	if request.method == "POST":
-		username = request.form.get("uname")
-		email = request.form.get("email")
-		gender = request.form.get("gender")
-		password = request.form.get("pwd")
-		cpassword = request.form.get("cpwd")
-		userData = User.query.filter_by(Email=email).first()
-		if userData is not None:
-			return render_template("registration.html", message="email already exists, Please login.")
-		else:
-			user = User(Username=username,
-                        Email=email, Gender=gender,Password=password,Cpassword=cpassword, Time_registered=time.ctime(time.time()))
-			db.session.add(user)
-			db.session.commit()
-			session[username] = request.form['uname']
-			return render_template("userDetails.html")
-	return render_template("errorpage.html")
 
 
 
@@ -94,11 +97,11 @@ def auth():
                 session[username] = username
                 return render_template('userHome.html', user=username)
             else:
-                return render_template("registration.html", message="username/password is incorrect!!")
+                return render_template("Registration.html", message="username/password is incorrect!!")
         else:
-            return render_template("registration.html", message="Account doesn't exists, Please register!")
+            return render_template("Registration.html", message="Account doesn't exists, Please register!")
     else:
-        return "<h1>Please login/register instead.</h1>"
+        return render_template("login.html")
 
 
 
