@@ -31,7 +31,7 @@ db.init_app(app)
 
 @app.route("/")
 def reroute():
-	return render_template("registration.html")
+	return redirect(url_for("registration.html"))
 
 
 @app.route("/register", methods=["POST","GET"])
