@@ -1,33 +1,54 @@
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" type="text/css" href="D:\MSIT\GIT_REPOS\project-1-2019501102\project1\static/registration_css.css">
-
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='registration_css.css') }}">
-
-
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
-  </script>
-
-
+<link rel="stylesheet" type="text/css" href="D:\MSIT\GIT_REPOS\project-1-2019501102\project1\static/search_style.css">
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 </head>
-<body> 
- <div class="container">
-    
- <h2> Succesfully Created Your Page  </h2>
-      <h3> Welcome {{f}} </h3>
-      <form action = "/" >
-      <button type="submit"  class = "loginbtn" value="Logout">Logout</button>
-    </form>
 
-  </div>
+<body>
+
+	
+<section class="book" >
+
+<button type="submit"  class = "btn1" formmethod="POST"
+          formaction="{{ url_for('register') }}">Logout</button>
+<div class="container" >
 
 
-  </div>
-  
-  
+		
+
+	<div class="row">
+		
+		
+ 
+		<div class="col-sm-12">
+
+
+			<div class="content">
+
+
+
+				<h2>Search for any book using ISBN, Book Name or Author name</h2>
+				<div class="input-group">
+         			<input type="text" class="form-control" placeholder="Enter name,isbn or author">
+         			<span class="input-group-btn">
+         			<button class="btn" type="submit">Search</button>
+
+
+
+         			</span>
+    			</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</section>
+<!-- <img src="b.jpg" class= "img">
+ -->
 
 
 </body>
