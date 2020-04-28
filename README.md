@@ -1,1 +1,0 @@
-# teckbuddy_App
