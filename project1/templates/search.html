@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 <!DOCTYPE html>
 <html>
@@ -96,3 +97,101 @@
 
 </body>
 </html>
+||||||| parent of ef5bb0e... last commit for search-resolved conflict
+=======
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="D:\MSIT\GIT_REPOS\project-1-2019501102\project1\static/search_style.css">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='search_style.css') }}">
+
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+
+
+
+ <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+</script>
+
+</head>
+
+<body>
+
+	
+<section class="book" >
+
+<form>
+<button type="submit"  class = "btn1" formmethod="POST"
+          formaction="{{ url_for('register') }}">Logout</button>
+<div class="container" >
+</form>
+
+		
+
+	<div class="row">
+		
+		
+ 
+		<div class="col-sm-12">
+
+
+			<div class="content">
+
+
+
+				<h2>Search for any book using ISBN, Book Name or Author name</h2>
+				<form>
+				<div>
+         			<input type="text" class="form-control" id="search" name="search" placeholder="Enter name,isbn or author">
+         			<span class="input-group-btn">
+         
+         			<button class="btn" type="submit" formmethod="POST" formaction="{{ url_for('search') }}">Search</button>
+
+
+
+         			</span>
+         		</form>
+    			</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</section>
+
+
+<div class="container">
+        <h1 style="margin:20px;">User Admin page</h1>
+        <table class="table table-bordered table-dark">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">ISBN</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Author</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for book in books %}
+                <tr>
+                    <th scope="row"> {{ loop.index }} </th>
+                    <td><a href="{{url_for('search')}}">{{book.isbn}}</a> </td>
+                    <td><a href="{{url_for('search')}}">{{book.tittle}}</a>  </td>
+                    <td><a href="{{url_for('search')}}">{{book.author}}</a>  </td>
+                </tr>
+                {% endfor %}
+
+
+
+    </div>
+
+
+    </tbody>
+    </table>
+
+</body>
+</html>
+>>>>>>> ef5bb0e... last commit for search-resolved conflict

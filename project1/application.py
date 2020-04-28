@@ -119,6 +119,7 @@ def userHome(Username):
     if Username in session:
         return render_template("userDetails.html", username=Username, message="Successfully logged in.", heading="Welcome back")
     return redirect(url_for('index'))
+<<<<<<< HEAD
 
 @app.route("/search",methods=["POST","GET"])
 def search():
@@ -133,3 +134,16 @@ def search():
 @app.route("/bookpage",methods=["GET"])
 def bookpage():
 	return render_template("bookpage.html")
+||||||| parent of ef5bb0e... last commit for search-resolved conflict
+=======
+
+@app.route("/search",methods=["POST","GET"])
+def search():
+	if request.method == "GET":
+		return render_template("search.html")
+	else:
+		result = request.form.get("search")
+		result = '%'+result+'%'
+		search_result = Books.query.filter(or_(Books.tittle.ilike(result), Books.author.ilike(result), Books.isbn.ilike(result))).all()
+		return render_template("search.html", books=search_result)
+>>>>>>> ef5bb0e... last commit for search-resolved conflict
