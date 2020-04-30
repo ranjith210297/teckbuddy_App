@@ -6,12 +6,15 @@ from flask import Flask, render_template, request, url_for,flash,session,redirec
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, desc
+from books_database import *
+from review_database import *
 from register import *
+from sqlalchemy import or_
 from sqlalchemy.orm import scoped_session, sessionmaker
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
-
-app = Flask(__name__)
+app = Flask(_name_)
 
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
@@ -26,10 +29,10 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 engine = create_engine(os.getenv("DATABASE_URL"))
 Session(app)
-db.init_app(app)
+db1.init_app(app)
 
 with app.app_context():
-	db.create_all()
+	db1.create_all()
 
 
 @app.route("/")
@@ -49,7 +52,7 @@ def register():
 		username = request.form.get("uname")
 		email = request.form.get("email")
 		gender = request.form.get("gender")
-		password = request.form.get("pwd")
+		password =  generate_password_hash(str(request.form.get("pwd")))
 		cpassword = request.form.get("cpwd")
 		userData = User.query.filter_by(Email=email).first()
 		if userData is not None:
@@ -57,8 +60,8 @@ def register():
 		else:
 			user = User(Username=username,
                         Email=email, Gender=gender,Password=password,Cpassword=cpassword, Time_registered=time.ctime(time.time()))
-			db.session.add(user)
-			db.session.commit()
+			db1.session.add(user)
+			db1.session.commit()
 			session[username] = request.form['uname']
 			return render_template("userDetails.html")
 	else:
@@ -69,9 +72,10 @@ def register():
 
 
 
-@app.route("/login")
+@app.route("/login", methods=["GET"])
 def login():
-	return render_template("login.html")
+	if request.method == "GET":
+		return render_template("login.html")
 
 
 @app.route("/admin")
@@ -92,10 +96,10 @@ def auth():
 
         userData = User.query.filter_by(Username=username).first()
 
-        if userData is not None:
-            if userData.Username == username and userData.Password == passwd:
+        if userData is not None and check_password_hash(userData.Password,passwd):
+            if userData.Username == username :
                 session[username] = username
-                return render_template('userHome.html', user=username)
+                return render_template('search.html')
             else:
                 return render_template("Registration.html", message="username/password is incorrect!!")
         else:
@@ -116,3 +120,47 @@ def userHome(Username):
     if Username in session:
         return render_template("userDetails.html", username=Username, message="Successfully logged in.", heading="Welcome back")
     return redirect(url_for('index'))
+
+
+
+@app.route("/search",methods=["POST","GET"])
+def search():
+	if request.method == "GET":
+		return render_template("search.html")
+	else:
+		result = request.form.get("search")
+		result = '%'+result+'%'
+		search_result = Books.query.filter(or_(Books.tittle.ilike(result), Books.author.ilike(result), Books.isbn.ilike(result),Books.year.ilike(result))).all()
+		return render_template("search.html", books=search_result)
+
+
+@app.route("/bookpage/<username>/<isbn>", methods = ["POST","GET"])
+def bookpage(username, isbn):
+	user1 = username
+
+	if user1 in session:
+		user_reviews = reviewRate.query.filter_by(isbn = book_isbn).all()
+		if request.method == "GET":
+			revie = reviewRate.query.filter(reviewRate.isbn.like(bookisbn),reviewRate.username.like(user1)).first()
+
+			user_reviews = reviewRate.query.filter_by(isbn=bookisbn).all()
+
+			if rev is None:
+				return render_template("bookpage.html",book=book,res=res,revie = user_reviews,username = user1)
+			return render_template("bookpage.html",book=book,message="You already given review!",revie = user_reviews,res=res,property="none",username=user1)
+
+		else:
+			rating = request.form.get("rating")
+			reviews = request.form.get("review")
+
+			isbn = book_isbn
+			username = user1
+
+			user = review(isbn=isbn,=review = reviews, rating=rating,username = username)
+			db.session.add(user)
+			db.session.commit()
+
+			user_reviews = reviewRate.query.filter_by(isbn = bookisbn).all()
+			return render_template("bookpage.html",res=res,book=book,review=user_reviews,property="none",message="You reviewed this book")
+	else:
+		return redirect(url_for("/"))

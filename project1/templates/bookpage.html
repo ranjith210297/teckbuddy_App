@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html class="no-js">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+
+ <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+</script>
+    
+</head>
+
+<body>
+   
+      
+
+
+<div class="container">
+  <h1 style="margin:20px;">Book Details</h1>
+                
+        <h2>ISBN : {{bookisbn.isbn}} </h2>     <br>
+       <h2> Title:  {{bookisbn.tittle}}  </h2>       <br>
+        <h2> Author: {{bookisbn.author}} </h2>     <br>
+        <h2> Year : {{bookisbn.year}} </h2> 
+                
+
+
+ <div class="container">
+        <div class="clearfix">
+            <img src="http://covers.openlibrary.org/b/isbn/{{book.isbn}}-L.jpg" class="img2" alt={{book.isbn}}
+                width="300" height="400">
+            <table id="tab">
+                <tr>
+                    <thead>
+                        <h1>{{book.title}}</h1>
+                    </thead>
+
+                </tr>
+                <tr>
+                    <td><b>ISBN:&nbsp&nbsp</b>{{book.isbn}}</td>
+                    <td><b>Author:&nbsp&nbsp</b>{{book.author}}</td>
+
+                </tr>
+                <tr>
+                    <td><b>Rating:&nbsp&nbsp</b>{{res['average_rating']}}</td>
+                    <td><b>Year Published:&nbsp&nbsp</b>{{book.year}}</td>
+                </tr>
+                <tr>
+                    <td><b>Review Count:&nbsp&nbsp</b>{{res['reviews_count']}}</td>
+                </tr>
+            </table>
+
+        </div>
+
+        <hr>
+
+
+    
+   <div style="display:{{property}}" class="container">
+                    <form action="{{url_for('test',username=username)}}" method="POST">
+                        <div class="rate">
+
+                            <h4 class="starhead">Rating</h4>
+
+                            <input type="radio" id="star5" name="rating" value="5" />
+                            <label for="star5" title="text">5 stars</label>
+                            <input type="radio" id="star4" name="rating" value="4" />
+                            <label for="star4" title="text">4 stars</label>
+                            <input type="radio" id="star3" name="rating" value="3" />
+                            <label for="star3" title="text">3 stars</label>
+                            <input type="radio" id="star2" name="rating" value="2" />
+                            <label for="star2" title="text">2 stars</label>
+                            <input type="radio" id="star1" name="rating" value="1" />
+                            <label for="star1" title="text">1 star</label>
+
+                        </div>
+
+                        <div id="text" class="row">
+                            <div class="col-75">
+                                <textarea id="Review" name="review" placeholder="Write your review.."
+                                    style="height:200px"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <input class="bttn" type="submit" value="Submit">
+                        </div>
+
+                    </form>
+                </div>
+
+
+<div class="reviews">
+                    <p style="color:rgb(22, 233, 22);text-align:center;">{{message}}</p>
+                    <h2 id="heading">Reviews</h2>
+
+                    {% for i in review %}
+                    <div class="review-body">
+                        <p>
+                            <b>{{i.username}}</b> <br>
+                            {{i.review}}
+                        </p>
+                    </div>
+                    <hr>
+                    {% endfor %}
+
+                </div>
+
+</div>
+
+</body>
+
+</html>
