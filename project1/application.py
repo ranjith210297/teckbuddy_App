@@ -98,7 +98,7 @@ def auth():
         if userData is not None and check_password_hash(userData.Password,passwd):
             if userData.Username == username :
                 session[username] = username
-                return render_template('search.html')
+                return render_template('search.html',username=username)
             else:
                 return render_template("Registration.html", message="username/password is incorrect!!")
         else:
@@ -119,31 +119,25 @@ def userHome(Username):
     if Username in session:
         return render_template("userDetails.html", username=Username, message="Successfully logged in.", heading="Welcome back")
     return redirect(url_for('index'))
-<<<<<<< HEAD
 
-@app.route("/search",methods=["POST","GET"])
-def search():
-	if request.method == "GET":
-		return render_template("search.html")
+@app.route("/search/<username>",methods=["POST","GET"])
+def search(username):
+	if username in session:
+
+		if request.method == "GET":
+			return render_template("search.html")
+		else:
+			result = request.form.get("search")
+			result = '%'+result+'%'
+			search_result = Books.query.filter(or_(Books.tittle.ilike(result), Books.author.ilike(result), Books.isbn.ilike(result))).all()
+			if len(search_result) == 0:
+				return render_template("search.html",message = "No records found")
+			return render_template("search.html", books=search_result)
 	else:
-		result = request.form.get("search")
-		result = '%'+result+'%'
-		search_result = Books.query.filter(or_(Books.tittle.ilike(result), Books.author.ilike(result), Books.isbn.ilike(result))).all()
-		return render_template("search.html", books=search_result)
+		return redirect(url_for("/"))
 
-@app.route("/bookpage",methods=["GET"])
+
+@app.route("/bookpage", methods=["POST","GET"])
 def bookpage():
-	return render_template("bookpage.html")
-||||||| parent of ef5bb0e... last commit for search-resolved conflict
-=======
-
-@app.route("/search",methods=["POST","GET"])
-def search():
 	if request.method == "GET":
-		return render_template("search.html")
-	else:
-		result = request.form.get("search")
-		result = '%'+result+'%'
-		search_result = Books.query.filter(or_(Books.tittle.ilike(result), Books.author.ilike(result), Books.isbn.ilike(result))).all()
-		return render_template("search.html", books=search_result)
->>>>>>> ef5bb0e... last commit for search-resolved conflict
+		return render_template("bookpage.html")

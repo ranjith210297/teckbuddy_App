@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 
 <html class="no-js">
 
@@ -18,9 +18,12 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"
         integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous">
     </script>
-</head>
+</head> -->
+{% extends "layout.html" %}
 
-<body>
+<!-- <body> -->
+
+    {% block content %}
     <div class="container">
         <h1 style="margin:20px;">User Admin page</h1>
         <table class="table table-bordered table-dark">
@@ -43,13 +46,10 @@
                 </tr>
                 {% endfor %}
 
-
+</tbody>
+    </table>
 
     </div>
 
 
-    </tbody>
-    </table>
-</body>
-
-</html>
+{% endblock %}

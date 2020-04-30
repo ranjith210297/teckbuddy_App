@@ -1,19 +1,11 @@
-<!DOCTYPE html>
 
-<html class="no-js">
+{% extends "layout.html" %}
 
-<head>
-	
-</head>
 
-<body>
-
-    <!-- <div class="alert alert-success" role="alert">
-        {{message}}
-    </div> -->
+{% block content %}
  <h1>Successfully created search</h1>
-   <!--  <h2>Username: {{Username}}</h2> -->
+    <h2>ISBN: {{isbn}}</h2>
+    <h2>Title: {{title}}</h2>
+    <h2>Author: {{author}}</h2>
 
-</body>
-
-</html>
+{% endblock %}
