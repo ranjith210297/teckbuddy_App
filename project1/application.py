@@ -115,52 +115,68 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route("/home/<Username>")
-def userHome(Username):
-    if Username in session:
-        return render_template("userDetails.html", username=Username, message="Successfully logged in.", heading="Welcome back")
+@app.route("/home")
+def userHome():
+    if "username" in session:
+	username = session["username"]
+        return render_template("userDetails.html", username=username, message="Successfully logged in.", heading="Welcome back")
     return redirect(url_for('index'))
-
 
 
 @app.route("/search",methods=["POST","GET"])
 def search():
-	if request.method == "GET":
-		return render_template("search.html")
-	else:
-		result = request.form.get("search")
-		result = '%'+result+'%'
-		search_result = Books.query.filter(or_(Books.tittle.ilike(result), Books.author.ilike(result), Books.isbn.ilike(result),Books.year.ilike(result))).all()
-		return render_template("search.html", books=search_result)
+	
+	#usera=session['uname']
+	if "username" in session:
+		username = session["username"]
 
-
-@app.route("/bookpage/<username>/<isbn>", methods = ["POST","GET"])
-def bookpage(username, isbn):
-	user1 = username
-
-	if user1 in session:
-		user_reviews = reviewRate.query.filter_by(isbn = book_isbn).all()
 		if request.method == "GET":
-			revie = reviewRate.query.filter(reviewRate.isbn.like(bookisbn),reviewRate.username.like(user1)).first()
-
-			user_reviews = reviewRate.query.filter_by(isbn=bookisbn).all()
-
-			if rev is None:
-				return render_template("bookpage.html",book=book,res=res,revie = user_reviews,username = user1)
-			return render_template("bookpage.html",book=book,message="You already given review!",revie = user_reviews,res=res,property="none",username=user1)
-
+			return render_template("search.html")
 		else:
-			rating = request.form.get("rating")
-			reviews = request.form.get("review")
-
-			isbn = book_isbn
-			username = user1
-
-			user = review(isbn=isbn,=review = reviews, rating=rating,username = username)
-			db.session.add(user)
-			db.session.commit()
-
-			user_reviews = reviewRate.query.filter_by(isbn = bookisbn).all()
-			return render_template("bookpage.html",res=res,book=book,review=user_reviews,property="none",message="You reviewed this book")
+			result = request.form.get("search")
+			result = '%'+result+'%'
+			search_result = Books.query.filter(or_(Books.tittle.ilike(result), Books.author.ilike(result), Books.isbn.ilike(result),Books.year.ilike(result))).all()
+			if len(search_result) == 0:
+				return render_template("search.html",message = "No records found")
+			return render_template("search.html", books=search_result)
+			#return "success"
 	else:
-		return redirect(url_for("/"))
+		return redirect(url_for("register"))
+
+
+@app.route("/bookpage/<isbn>", methods = ["POST","GET"])
+def bookpage(isbn):
+	
+	book_isbn=isbn
+
+	if "username" in session:
+			username = session["username"]
+			user_reviews = reviewRate.query.filter_by(Isbn = book_isbn).all()
+			res = requests.get("https://www.goodreads.com/book/review_counts.json",
+                           params={"key": "fKvLN1nI7uY5XcyXi7VgvQ", "isbns": book_isbn})
+			if request.method == "GET":
+				revie = reviewRate.query.filter(reviewRate.Isbn.like(book_isbn),reviewRate.Username.like(username)).first()
+
+				#user_reviews = reviewRate.query.filter_by(isbn=bookisbn).all()
+				search_result = Books.query.filter_by(isbn=book_isbn).all()
+
+				if revie is None:
+					return render_template("bookpage.html",book=search_result,res=res,review = user_reviews,username = username)
+				return render_template("bookpage.html",book=search_result,message="You already given review!",review = user_reviews,res=res,property="none",username=username)
+
+			else:
+				print("no")
+				rating = request.form.get("rating")
+				reviews = request.form.get("Review")
+
+				isbn = book_isbn
+				username = username
+				
+				user = reviewRate(Isbn=book_isbn,Review = reviews, Rating=rating,Username = username)
+				db.session.add(user)
+				db.session.commit()
+
+			#user_reviews = reviewRate.query.filter_by(isbn = bookisbn).all()
+				return render_template("bookpage.html",res=res,book=search_result,review=user_reviews,property="none",message="You reviewed this book")
+	else:
+			return redirect(url_for("/"))
