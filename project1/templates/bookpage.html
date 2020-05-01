@@ -1,21 +1,10 @@
-<!DOCTYPE html>
-
-<html class="no-js">
+{% extends "layout.html" %}
 
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 
- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
-</script>
-    
-</head>
 
-<body>
+
+{% block content %}
    
       
 
@@ -23,46 +12,40 @@
 <div class="container">
   <h1 style="margin:20px;">Book Details</h1>
                 
-        <h2>ISBN : {{bookisbn.isbn}} </h2>     <br>
-       <h2> Title:  {{bookisbn.tittle}}  </h2>       <br>
-        <h2> Author: {{bookisbn.author}} </h2>     <br>
-        <h2> Year : {{bookisbn.year}} </h2> 
-                
+        <h2>ISBN : {{book.isbn}} </h2>     
+       <h2> Title:  {{book.tittle}}  </h2>       
+        <h2> Author: {{book.author}} </h2>    
+        <h2> Year : {{book.year}} </h2> 
+</div>   
 
 
  <div class="container">
         <div class="clearfix">
-            <img src="http://covers.openlibrary.org/b/isbn/{{book.isbn}}-L.jpg" class="img2" alt={{book.isbn}}
-                width="300" height="400">
+            
             <table id="tab">
                 <tr>
                     <thead>
-                        <h1>{{book.title}}</h1>
+                        <h1>{{book.tittle}}</h1>
                     </thead>
 
                 </tr>
-                <tr>
-                    <td><b>ISBN:&nbsp&nbsp</b>{{book.isbn}}</td>
-                    <td><b>Author:&nbsp&nbsp</b>{{book.author}}</td>
 
-                </tr>
                 <tr>
-                    <td><b>Rating:&nbsp&nbsp</b>{{res['average_rating']}}</td>
-                    <td><b>Year Published:&nbsp&nbsp</b>{{book.year}}</td>
+                <td><b>Review Count:&nbsp&nbsp</b>{{res['reviews_count']}}</td>
                 </tr>
-                <tr>
-                    <td><b>Review Count:&nbsp&nbsp</b>{{res['reviews_count']}}</td>
-                </tr>
+                
+            
             </table>
 
         </div>
+</div>
 
         <hr>
 
 
     
    <div style="display:{{property}}" class="container">
-                    <form action="{{url_for('test',username=username)}}" method="POST">
+                    <form action="{{url_for('bookpage',isbn=book.isbn)}}" method="POST">
                         <div class="rate">
 
                             <h4 class="starhead">Rating</h4>
@@ -92,8 +75,8 @@
                         </div>
 
                     </form>
-                </div>
-
+     </div>
+   <hr>
 
 <div class="reviews">
                     <p style="color:rgb(22, 233, 22);text-align:center;">{{message}}</p>
@@ -102,17 +85,15 @@
                     {% for i in review %}
                     <div class="review-body">
                         <p>
-                            <b>{{i.username}}</b> <br>
-                            {{i.review}}
+                            <b>{{i.Username}}</b> <br>
+                            {{i.Review}}
                         </p>
                     </div>
                     <hr>
                     {% endfor %}
 
-                </div>
-
 </div>
 
-</body>
 
-</html>
+
+{% endblock %}
