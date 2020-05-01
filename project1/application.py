@@ -36,7 +36,7 @@ with app.app_context():
 
 @app.route("/")
 def index():
-	if 'username' in session:
+	if "username" in session:
 		return redirect(url_for('home'))
 	return redirect(url_for('register'))
 
@@ -114,15 +114,17 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route("/home/<Username>")
-def userHome(Username):
-    if Username in session:
-        return render_template("userDetails.html", username=Username, message="Successfully logged in.", heading="Welcome back")
+@app.route("/home")
+def userHome():
+    if "username" in session:
+    	username = session["username"]
+        return render_template("userDetails.html", username=username, message="Successfully logged in.", heading="Welcome back")
     return redirect(url_for('index'))
 
-@app.route("/search/<username>",methods=["POST","GET"])
+@app.route("/search",methods=["POST","GET"])
 def search(username):
-	if username in session:
+	if "username" in session:
+		username = session["username"]
 
 		if request.method == "GET":
 			return render_template("search.html")
