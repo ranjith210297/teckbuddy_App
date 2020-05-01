@@ -114,17 +114,18 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route("/home/<Username>")
-def userHome(Username):
-    if Username in session:
-        return render_template("userDetails.html", username=Username, message="Successfully logged in.", heading="Welcome back")
+@app.route("/home")
+def userHome():
+    if "username" in session:
+	username = session["username"]
+        return render_template("userDetails.html", username=username, message="Successfully logged in.", heading="Welcome back")
     return redirect(url_for('index'))
 
-@app.route("/bookpage/<username>/<isbn>",methods=["GET","POST"])
-def bookpage(username,isbn):
-	user1 = username
+@app.route("/bookpage/<isbn>",methods=["GET","POST"])
+def bookpage(isbn):
 	bk = isbn
-	if user1 in session:
+	if "username" in session:
+		username = session["username"]
 
 		book = Books.query.filter_by(isbn=bk).first()
 	
