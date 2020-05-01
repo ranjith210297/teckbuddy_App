@@ -98,7 +98,7 @@ def auth():
         if userData is not None and check_password_hash(userData.Password,passwd):
             if userData.Username == username :
                 session[username] = username
-                return render_template('search.html')
+                return render_template('userHome.html')
             else:
                 return render_template("Registration.html", message="username/password is incorrect!!")
         else:
@@ -120,25 +120,26 @@ def userHome(Username):
         return render_template("userDetails.html", username=Username, message="Successfully logged in.", heading="Welcome back")
     return redirect(url_for('index'))
 
-
-
-
-
-
-
-
-
-@app.route("/bookpage/<isbn>",methods=["GET","POST"])
-def bookpage(isbn):
-	
+@app.route("/bookpage/<username>/<isbn>",methods=["GET","POST"])
+def bookpage(username,isbn):
+	user1 = username
 	bk = isbn
+	if user1 in session:
 
-	book = Books.query.filter_by(isbn=bk).first()
+		book = Books.query.filter_by(isbn=bk).first()
 	
-	if request.method == "POST":
+		if request.method == "POST":
 		
 		
-		return render_template("bookpage.html",bookisbn = book)
+			return render_template("bookpage.html",bookisbn = book)
 		
-	else:
-		return render_template("bookpage.html",bookisbn = book)
+		else:
+			return render_template("bookpage.html",bookisbn = book)
+
+
+
+
+
+
+
+
