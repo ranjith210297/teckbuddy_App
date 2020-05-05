@@ -34,8 +34,6 @@ with app.app_context():
 
 @app.route("/")
 def index():
-	if 'username' in session:
-		return redirect(url_for('home'))
 	return redirect(url_for('register'))
 
 
@@ -59,7 +57,7 @@ def register():
                         Email=email, Gender=gender,Password=password,Cpassword=cpassword, Time_registered=time.ctime(time.time()))
 			db.session.add(user)
 			db.session.commit()
-			session[username] = request.form['uname']
+			session["username"] = username
 			return render_template("userDetails.html")
 	else:
 
@@ -71,7 +69,8 @@ def register():
 
 @app.route("/login")
 def login():
-	return render_template("login.html")
+	if request.method == "GET":
+		return render_template("login.html")
 
 
 @app.route("/admin")
@@ -94,7 +93,7 @@ def auth():
 
         if userData is not None:
             if userData.Username == username and userData.Password == passwd:
-                session[username] = username
+                session["username"] = username
                 return render_template('userHome.html', user=username)
             else:
                 return render_template("Registration.html", message="username/password is incorrect!!")
@@ -107,12 +106,7 @@ def auth():
 
 @app.route("/logout")
 def logout():
-    session.pop('Username', None)
+    session.pop("username", None)
     return redirect(url_for('index'))
 
 
-@app.route("/home/<Username>")
-def userHome(Username):
-    if Username in session:
-        return render_template("userDetails.html", username=Username, message="Successfully logged in.", heading="Welcome back")
-    return redirect(url_for('index'))
