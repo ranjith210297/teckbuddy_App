@@ -6,7 +6,7 @@
 <section class="book" >
 
 <form>
-<button type="submit"  class = "btn1" formmethod="POST"
+<button type="submit"  class = "btn1" formmethod="GET"
           formaction="{{ url_for('register') }}">Logout</button>
 <div class="container" >
 </form>
@@ -30,7 +30,7 @@
               <input type="text" class="form-control" id="search" name="search" placeholder="Enter name,isbn or author">
               <span class="input-group-btn">
          
-              <button class="btn" type="submit" formmethod="POST" formaction="{{ url_for('search',username=username) }}">Search</button>
+              <button class="btn" type="submit" formmethod="POST" formaction="{{ url_for('search') }}">Search</button>
 
 
 

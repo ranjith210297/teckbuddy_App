@@ -36,8 +36,6 @@ with app.app_context():
 
 @app.route("/")
 def index():
-	if "username" in session:
-		return redirect(url_for('home'))
 	return redirect(url_for('register'))
 
 
@@ -61,7 +59,7 @@ def register():
                         Email=email, Gender=gender,Password=password,Cpassword=cpassword, Time_registered=time.ctime(time.time()))
 			db1.session.add(user)
 			db1.session.commit()
-			session[username] = request.form['uname']
+			session["username"] = username
 			return render_template("userDetails.html")
 	else:
 
@@ -97,7 +95,7 @@ def auth():
 
         if userData is not None and check_password_hash(userData.Password,passwd):
             if userData.Username == username :
-                session[username] = username
+                session["username"] = username
                 return render_template('search.html',username=username)
             else:
                 return render_template("Registration.html", message="username/password is incorrect!!")
@@ -110,19 +108,13 @@ def auth():
 
 @app.route("/logout")
 def logout():
-    session.pop('Username', None)
+    session.pop("username", None)
     return redirect(url_for('index'))
 
 
-@app.route("/home")
-def userHome():
-    if "username" in session:
-    	username = session["username"]
-        return render_template("userDetails.html", username=username, message="Successfully logged in.", heading="Welcome back")
-    return redirect(url_for('index'))
 
 @app.route("/search",methods=["POST","GET"])
-def search(username):
+def search():
 	if "username" in session:
 		username = session["username"]
 
@@ -136,10 +128,10 @@ def search(username):
 				return render_template("search.html",message = "No records found")
 			return render_template("search.html", books=search_result)
 	else:
-		return redirect(url_for("/"))
+		return redirect(url_for("register"))
 
 
-@app.route("/bookpage", methods=["POST","GET"])
+@app.route("/bookpage", methods=["GET"])
 def bookpage():
 	if request.method == "GET":
 		return render_template("bookpage.html")
