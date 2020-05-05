@@ -1,19 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" type="text/css" href="D:\MSIT\GIT_REPOS\project-1-2019501102\project1\static/registration_css.css">
-
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='registration_css.css') }}">
 
 
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
-  </script>
+
+{% extends "layout.html" %}
 
 
-</head>
-<body> 
+{% block content %}
  <div class="container">
     <div class = "heading1"
         <h1>Login</h1>
@@ -53,5 +44,5 @@
   
 
 
-</body>
-</html>
+
+{% endblock %}
