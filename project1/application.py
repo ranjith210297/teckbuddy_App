@@ -1,8 +1,9 @@
 import os
 import sys
 import time
+import json
 
-from flask import Flask, render_template, request, url_for,flash,session,redirect
+from flask import Flask, render_template, request, url_for,flash,session,redirect,json,jsonify
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, desc
@@ -135,3 +136,40 @@ def search():
 def bookpage():
 	if request.method == "GET":
 		return render_template("bookpage.html")
+
+
+@app.route("/api/search/", methods=["POST"])
+def api_search():
+	if request.method == "POST":
+		jsobj = request.json
+
+		result = jsobj["search"]
+		result = '%' + result + '%'
+		search_result = Books.query.filter(or_(Books.tittle.ilike(result), Books.author.ilike(result), Books.isbn.ilike(result))).all()
+		if result is None:
+			return jsonify({"error": "No results found"}), 400
+
+		book_isbn = []
+		book_title = []
+		book_author = []
+		book_year = []
+
+
+		for book in search_result:
+			book_isbn.append(book.isbn)
+			book_title.append(book.tittle)
+			book_author.append(book.author)
+			book_year.append(book.year)
+
+		book_dict = {
+		"isbn": book_isbn,
+		"title": book_title,
+		"author": book_author,
+		"year": book_year
+		}
+
+		print(book_dict)
+
+		return jsonify(book_dict), 200
+	
+	return render_template("search.html")
