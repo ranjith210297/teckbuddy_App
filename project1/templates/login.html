@@ -1,36 +1,95 @@
 {% extends "layout.html" %}
 
-   {% block content %}
- <div class="container">
-    <div class = "heading1">
-        <h1>Login</h1>
+{% block scripts %}
+<script type = "text/javascript">
+jQuery(document).ready(function($) {
+    $("#reviewform").submit(function(e) {
+        console.log("entered");
+        
+        e.preventDefault();
+        var isbn = $("#isbnofbook").html()
+        var url = "/api/submitReview?" + $.param({ 'isbn' : 1416949658})
+ 
+        var formData = jQuery('#reviewform').serializeArray();
+        console.log(formData);
+        requestobj = {}
+        requestobj['rating'] = formData[0]["value"]
+        requestobj['comment'] = formData[1]["value"]
+        requestobj['email'] = $("#email").text().trim('↵')
+        console.log(requestobj)
+        $.ajax({
+            type : "POST",
+            url: url,
+            data: JSON.stringify(requestobj),
+            contentType: "application/json",
+            success: function(data)
+            {
+                console.log(data);
+                var htmltext=data;
+                $("#review").html(htmltext);                
+            },
+            error: function(xhr, status, errorThrown){
+                if (xhr.status == 409){
+                    var errormessage = "<br><br><h3 style = 'text-align:center'>User has already given rating</h3>"                
+                }
+                else if (xhr.status == 500){
+                    var errormessage = "<br><br><h3 style = 'text-align:center'>Please try again after some time</h3>"                                     
+                }
+                else if (xhr.status == 404) {
+                    var errormessage = "<br><br><h3 style = 'text-align:center'>No book found</h3>"                                                         
+                }
+                $("#review").html(errormessage);                
+            }
+
+        });
+
+        
+    });
+})
+</script>
+{% endblock %}
+
+{% block body %}
+<nav class = "navbar navbar-expand-sm bg-dark navbar-dark fixed-top justify-content-between">
+    <a class = "navbar-brand">Books</a>
+    <ul class ="navbar-nav">
+        <li class ="navbar-brand" id ="exam">
+            {{ user }}
+        </li>
+        <li class="nav-item">
+            <form class="form-inline">
+                <button type="submit" formaction="/layout">Layout</button>
+            </form>
+        </li>
+    </ul>
+</nav>
+    <br>
+    <br>
+    <br>
+    <h1 style = "text-align:center">Review</h1>
+
+<form class = "example" id ="reviewform" style = "margin:auto;max-width:300px;" onsubmit="event.preventDefault(); reviewform()">
+    <div class="rate">
+
+        <h2 style="text-align: center;">Rate This Article</h2>
+
+        <input type="radio" id="star5" name="rating" value="5" />
+        <label for="star5" title="text">5 stars</label>
+
+        <input type="radio" id="star4" name="rating" value="4" />
+        <label for="star4" title="text">4 stars</label>
+
+        <input type="radio" id="star3" name="rating" value="3" />
+        <label for="star3" title="text">3 stars</label>
+
+        <input type="radio" id="star2" name="rating" value="2" />
+        <label for="star2" title="text">2 stars</label>
+
+        <input type="radio" id="star1" name="rating" value="1" />
+        <label for="star1" title="text">1 star</label>
+
     </div>
-    <p>Please fill in this to login</p>
-    <hr>
+</form>
 
-  <div class="container" id="main">
-    <div class="registration">
-      <form>
-        
-        <label for="uname">UserName</label><br />
-        <input type="text" id="uname" name="uname" /><br />
-        
-        <label for="pwd">Password</label><br />
-        <input type="text" id="pwd" name="pwd" /><br />
-       
-        
-
-          <button type="submit"  class = loginbtn formmethod="POST"
-          formaction="{{ url_for('auth') }}" 
-          >Login</button>
-
-        </div>
-
- </form>
-    </div>
-  </div>
-
-
-  </div>
-  
-  {% endblock content %}
+<div id ="review"></div>
+{% endblock %}
