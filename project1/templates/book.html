@@ -1,57 +1,32 @@
-<!-- % extends "layout.html" %}
-
-{% block content %}
-<div class="container">
-  <h1 style="margin:20px;">Book Details</h1>
-                
-        <h2>ISBN : {{bookisbn.isbn}} </h2>     <br>
-       <h2> Title:  {{bookisbn.tittle}}  </h2>       <br>
-        <h2> Author: {{bookisbn.author}} </h2>     <br>
-        <h2> Year : {{bookisbn.year}} </h2> 
-                
-  
-
-</div>
-
-{% endblock %}
- -->
-
-<!-- {% extends 'layout.html' %} -->
 {% block links %}
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
 {% endblock %}
 {%block scripts%}
-<script type ="text/javascript">
-function bookdisplay(ele){
-  console.log(ele)
-  console.log("entered function")
+<script type = "text/javascript">
+function bookdisplay(arg) {
   var requestobj = {}
-  requestobj["isbn"] = ele
-  var url= "/api/book?isbn="+ele
-  console.log("entered here")
-  var xhttps = new XMLHttpRequest()
-  xhttps.open('GET',url)
-  xhttps.send()  
-  xhttps.onload = function() {
-    var data = JSON.parse(xhttps.responseText);
-    if (xhttps.status=="200"){
-      console.log(data.reviews)
-      var htmltext = "<p id = 'isbnofbook'>"+data.isbn +'<ul>'+data.title+'</ul>'+'<ul>'+data.author+'</ul>'+'<ul>'+data.year+"</p><ul>";
-    
-    } else {
-      if (xhttps.status == 404){
-        var text = "<ul>"+data+"</ul>"
-      }else if (xhttps.status == 500){
-        var text = "<ul>"+data+"</ul>"
-      }
-    }
-     
-  }
-  
-}
+  var url = "/api/book"
+  requestobj["isbn"] = arg.id
+  $.ajax({
+        type: "GET",
+        url: url,
+        data: requestobj,
+        success: function(data)
+        {
+          console.log(data.reviews);
 
-    </script>
-    {% endblock %}
+          var htmltext = "<p id = 'isbnofbook'>"+data.isbn +"</p><ul>";
+          for(var i = 0; i < data.reviews.length; i++) {
+            htmltext = htmltext + "<li><p>" + data.reviews[i]["email"] + " ===> " + data.reviews[i]["comment"] +"</p></li>"
+          }
+          htmltext = htmltext + "</ul>"
+          $("#reviewresults").html(htmltext);
+          
+        }
+      });
+ }
+ </script>
+ {% endblock %}
 
 {% block body %}  
     <nav class="navbar navbar-light navbar-fixed-top" style="background-color: #e3f2fd;" >
