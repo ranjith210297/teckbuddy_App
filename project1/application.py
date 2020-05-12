@@ -146,30 +146,33 @@ def api_search():
 		result = jsobj["search"]
 		result = '%' + result + '%'
 		search_result = Books.query.filter(or_(Books.tittle.ilike(result), Books.author.ilike(result), Books.isbn.ilike(result))).all()
-		if result is None:
-			return jsonify({"error": "No results found"}), 400
+		try:
+			if search_result is None:
+				return jsonify({"error": "No results found"}), 400
 
-		book_isbn = []
-		book_title = []
-		book_author = []
-		book_year = []
+			book_isbn = []
+			book_title = []
+			book_author = []
+			book_year = []
 
 
-		for book in search_result:
-			book_isbn.append(book.isbn)
-			book_title.append(book.tittle)
-			book_author.append(book.author)
-			book_year.append(book.year)
+			for book in search_result:
+				book_isbn.append(book.isbn)
+				book_title.append(book.tittle)
+				book_author.append(book.author)
+				book_year.append(book.year)
 
-		book_dict = {
-		"isbn": book_isbn,
-		"title": book_title,
-		"author": book_author,
-		"year": book_year
-		}
+			book_dict = {
+			"isbn": book_isbn,
+			"title": book_title,
+			"author": book_author,
+			"year": book_year
+			}
 
-		print(book_dict)
+			print(book_dict)
 
-		return jsonify(book_dict), 200
+			return jsonify(book_dict), 200
+		except Exception as ex:
+			return jsonify({"error" : "No books found"}), 405
 	
-	return render_template("search.html")
+	return jsonify({"error" : "Server Error"}), 500
