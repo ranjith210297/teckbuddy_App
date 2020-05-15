@@ -1,8 +1,5 @@
 
-
-
 {% extends "layout.html" %}
-
 
 {% block content %}
 
@@ -31,10 +28,7 @@
         <label for="cpwd">Confirm Password</label><br />
         <input type="text" id="cpwd" name="cpwd" /><br />
 
-              
-        
-
-          <div >
+       <div >
         <button type="submit"  class = registerbtn formmethod="POST"
           formaction="{{ url_for('register') }}">Register</button>
 
@@ -61,5 +55,4 @@
   </div>
   
   
-
 {% endblock %}

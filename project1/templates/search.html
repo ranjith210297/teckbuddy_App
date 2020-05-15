@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='search_style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='review_style.css') }}">
+
+
+
+ <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script>
+var listt=[];
+var username;
+var bookisbn;
+
+  function apisearch() {
+    var request = new XMLHttpRequest();
+    var res = document.forms['res']['search'].value;
+    request.open("POST","/api/search/");
+    request.setRequestHeader("Content-Type", "application/json");
+
+
+    //when sending data to webserver, it must be a sting: using stringify
+    request.send(JSON.stringify({
+      "search": res
+    }));
+    //onload function processes request that we receive.
+    request.onload = () => {
+      if (request.status === 200) {
+        var data = JSON.parse(request.responseText)
+        let str = ""
+        
+        for (var i = 0; i < data["author"].length; i++) {
+          var a = `<img src="http://covers.openlibrary.org/b/isbn/${data["isbn"][i]}-M.jpg" width = "100" height = "150" >`
+          str = str + "<tr>" + "<td>" + a + "</td>"+
+          "<td>" + "<a href = javascript:bookPage(" + i + ")>" + data["isbn"][i] + "</a>" + "</td>" + 
+          "<td>" + data["title"][i] + "</td>" +
+          "<td>" + data["author"][i] + "</td>" +
+          "<td>" + data["year"][i] + "</td>" + "</tr>"
+          listt.push(data["isbn"][i])
+        }
+        document.getElementById("tab").innerHTML = str;
+        console.log(listt)
+
+      } else {
+        console.log(`error ${request.status} ${request.statusText}`)
+        document.getElementById("tab").innerHTML = "Error loading page, please try again";
+      }
+    }
+
+    event.preventDefault()
+    return false;
+}
+
+
+var usr;
+
+function bookPage(isbn) {
+      
+      var isbn = listt[isbn]
+      usr = document.getElementById("username").innerHTML;
+
+
+      bookisbn = isbn
+      username = usr
+
+      let request = new XMLHttpRequest();
+      request.open("POST", "/api/book/");
+      request.setRequestHeader("Content-Type", "application/json");
+      request.send(JSON.stringify({ isbn: isbn, username: username}));
+
+      request.onload = () => {
+        if (request.status === 200) {
+          var data = JSON.parse(request.responseText);
+          console.log(data);
+
+          let str = "";
+
+          str =
+            str +
+            
+            `<table id="tab">
+          <tr>
+            <thead>
+              <h1>${data["title"]}</h1>
+            </thead>
+          </tr>
+          <tr>
+            <td class="isbn"><b>ISBN:</b>${isbn}</td>
+            <td><b>Author:</b>${data["author"]}</td>
+          </tr>
+          <tr>
+            <td><b>Rating:</b>${data["average_rating"]}</td>
+            <td><b>Year:</b>${data["year"]}</td>
+          </tr>
+          <tr>
+            <td><b>Average Review Count:</b>${data["average_reviewcount"]}</td>
+          </tr>
+        </table> `;
+
+          document.querySelector(".clearfix").innerHTML = str;
+          var msg = "";
+          var flag = false;
+
+          //check if the user has already given review or not.
+          for (let i = 0; i < data["username"].length; i++) {
+            if ((data["username"][i] === usr) && (data["isbn"][i] == bookisbn)) {
+              msg = "You have already reviewed this book. ";
+              let reviewSection = document.querySelector(".reviews");
+              reviewSection.style.display = "none";
+              flag = true;
+              console.log(flag);
+            }
+          }
+
+          //if review was not gives display review section.
+          if (flag === false) {
+            let reviewSection = document.querySelector(".reviews");
+            reviewSection.style.display = "block";
+          }
+
+          let rev_str = "";
+          //display all the reviews for that book.
+          for (let i = 0; i < data["review"].length; i++) {
+            rev_str = rev_str + `<div class="review-body"><p>
+              <b>${data["username"][i]}</b> 
+              ${data["time_stamp"][i]}<br>
+              ${data["review"][i]}</p>
+            </div>
+            <hr>`;
+          }
+
+          let all_rev = "";
+          all_rev = all_rev + `<p style="color:rgb(22, 233, 22);text-align:center;">${msg}</p> 
+          <h2 id="heading">Reviews</h2>` + rev_str;
+          document.querySelector(".reviews1").innerHTML = all_rev;
+        }
+      };
+    }
+    
+
+
+function api_review() {
+      rating = document.forms["userRating"]["rating"].value
+      rev = document.forms["userRating"]["review"].value
+      
+      let request = new XMLHttpRequest();
+      request.open("POST", "/api/review/");
+      request.setRequestHeader("Content-Type", "application/json");
+      request.send(JSON.stringify({
+        "isbn": bookisbn,
+        "username": username,
+        "rating": rating,
+        "reviews": rev
+      }));
+
+      request.onload = () => {
+        if (request.status === 200) {
+          var data = JSON.parse(request.responseText)
+          console.log(data)
+
+          setTimeout(function () {
+        
+          }, 2000);
+
+          var message = ""
+          var flag = false
+          for (let i = 0; i < data["username"].length; i++) {
+            if (data["username"][i] === usr) {
+              message = "You have already reviewed this book. "
+              let reviewSection = document.querySelector(".reviews");
+              reviewSection.style.display = "none";
+              flag = true
+            }
+          }
+
+          if (flag === false) {
+            let reviewSection = document.querySelector(".reviews");
+            reviewSection.style.display = "block";
+
+          }
+          var usr = document.getElementById("username").innerHTML
+          let rev_str = ""
+
+          for (let i = 0; i < data["review"].length; i++) {
+            rev_str = rev_str + `<div class="review-body">
+            <p>
+              <b>${ data["username"][i]}</b> ${data["time_stamp"][i]}<br>
+                ${ data["review"][i]}
+            </p>
+          </div>
+            <hr>`
+
+          }
+
+          let all_rev = ""
+          all_rev = all_rev +
+            `<p style="color:rgb(22, 233, 22);text-align:center;">${message}</p>
+          <h2 id="heading">Reviews</h2>` + rev_str
+
+          document.querySelector(".reviews1").innerHTML = all_rev;
+
+
+
+
+        }
+      }
+      event.preventDefault();
+      return false;
+    }
+
+
+
+</script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+    integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+    integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
+</head>
+
+
+
+<body>
+<section class="book" >
+
+<form>
+<button type="submit"  class = "btn1" formmethod="GET"
+          formaction="{{ url_for('register') }}">Logout</button>
+  </form>
+<div class="container">
+
+
+    
+
+  <div class="row">
+    
+    
+ 
+    <div class="col-sm-12">
+
+
+      <div class="content">
+
+
+
+        <h2>Search for any book using ISBN, Book Name or Author name</h2>
+        <form name="res">
+        <div>
+              <input type="text" class="form-control" name="search" placeholder="Enter name,isbn or author">
+              <span class="input-group-btn">
+                  <button type="submit" class="btn"  onclick="apisearch()">Search</button>
+
+
+              </span>
+            </form>
+          </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+<div class="container">
+        <h1 style="margin:20px;">Books available <p style="color:red;">{{ message }}</p> </h1>
+        
+        <table class="table table-bordered table-dark">
+            <thead class="thead-dark">
+                <tr id="search">
+                    <th scope="col">Book Cover</th>
+                    <th scope="col" id="isbn">ISBN</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Author</th>
+                    <th scope="col">Year</th>
+                </tr>
+            </thead>
+            <tbody id="tab">
+            </tbody>
+    </table>
+    </div>
+
+ <h1 id="username" name="userName" style="display: {{property}};">{{user}}</h1>
+    <div class="container">
+      <div class="clearfix"></div>
+      <hr />
+
+      <div>
+        <div style="display: {{property}};" class="reviews">
+          <div class="container">
+            <form name="userRating">
+              <div class="rate">
+                <h4 class="starhead">Rating</h4>
+
+                <input type="radio" id="star5" name="rating" value="5" />
+                <label for="star5" title="text">5 stars</label>
+                <input type="radio" id="star4" name="rating" value="4" />
+                <label for="star4" title="text">4 stars</label>
+                <input type="radio" id="star3" name="rating" value="3" />
+                <label for="star3" title="text">3 stars</label>
+                <input type="radio" id="star2" name="rating" value="2" />
+                <label for="star2" title="text">2 stars</label>
+                <input type="radio" id="star1" name="rating" value="1" />
+                <label for="star1" title="text">1 star</label>
+              </div>
+
+              <div id="text" class="row">
+                <div class="col-75">
+                  <textarea id="Review" name="review" placeholder="Write your review.."
+                    style="height: 200px;"></textarea>
+                </div>
+              </div>
+
+              <div class="row">
+                <button class="bttn" type="submit" onclick="api_review()">
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+
+        <div class="reviews1"></div>
+
+      </div>
+    </div>
+
+
+</body>
+
+</html>

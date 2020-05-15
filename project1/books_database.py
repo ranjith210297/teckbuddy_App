@@ -9,35 +9,37 @@ from flask import Flask
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 
+db = SQLAlchemy()
 
+app = Flask(__name__)
 
-app1 = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+#app1.app_context().push()
 
-app1.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
-app1.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app1.app_context().push()
+db.init_app(app)
 
-db1 = SQLAlchemy()
 
 #class in which we create table colums for databse of books.
-class Books(db1.Model):
+class Books(db.Model):
     __tablename__ = "books"
-    isbn = db1.Column(db1.String, nullable = False,primary_key=True)
-    tittle = db1.Column(db1.String, nullable = False)
-    author = db1.Column(db1.String, nullable = False)
-    year = db1.Column(db1.String, nullable= False)
+    isbn = db.Column(db.String, nullable = False,primary_key=True)
+    tittle = db.Column(db.String, nullable = False)
+    author = db.Column(db.String, nullable = False)
+    year = db.Column(db.String, nullable= False)
 
-db1.init_app(app1)
-db1.create_all()
+
 
 #main method to import books.
 def main():
+    #db.create_all()
     f= open("books.csv")
     reader = csv.reader(f)
     for isbn, tittle, author, year in reader:
         book = Books(isbn= isbn, tittle=tittle, author=author, year=year)
-        db1.session.add(book)
-    db1.session.commit()
+        db.session.add(book)
+    db.session.commit()
 
 if __name__ == "__main__":
+    with app.app_context():
         main()
