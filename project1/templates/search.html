@@ -170,14 +170,7 @@ function api_review() {
 
           var message = ""
           var flag = false
-          for (let i = 0; i < data["username"].length; i++) {
-            if (data["username"][i] === usr) {
-              message = "You have already reviewed this book. "
-              let reviewSection = document.querySelector(".reviews");
-              reviewSection.style.display = "none";
-              flag = true
-            }
-          }
+        
 
           if (flag === false) {
             let reviewSection = document.querySelector(".reviews");
