@@ -3,28 +3,90 @@
 {% endblock %}
 {%block scripts%}
 <script type = "text/javascript">
-function bookdisplay(arg) {
-  var requestobj = {}
-  var url = "/api/book"
-  requestobj["isbn"] = arg.id
-  $.ajax({
-        type: "GET",
-        url: url,
-        data: requestobj,
-        success: function(data)
-        {
-          console.log(data.reviews);
+var usr;
 
-          var htmltext = "<p id = 'isbnofbook'>"+data.isbn +"</p><ul>";
-          for(var i = 0; i < data.reviews.length; i++) {
-            htmltext = htmltext + "<li><p>" + data.reviews[i]["email"] + " ===> " + data.reviews[i]["comment"] +"</p></li>"
+function bookPage(isbn) {
+      
+      var isbn = listt[isbn]
+      usr = document.getElementById("username").innerHTML;
+
+
+      bookisbn = isbn
+      username = usr
+
+      let request = new XMLHttpRequest();
+      request.open("POST", "/api/book/");
+      request.setRequestHeader("Content-Type", "application/json");
+      request.send(JSON.stringify({ isbn: isbn, username: username}));
+
+      request.onload = () => {
+        if (request.status === 200) {
+          var data = JSON.parse(request.responseText);
+          console.log(data);
+
+          let str = "";
+
+          str =
+            str +
+            
+            `<table id="tab">
+          <tr>
+            <thead>
+              <h1>${data["title"]}</h1>
+            </thead>
+          </tr>
+          <tr>
+            <td class="isbn"><b>ISBN:</b>${isbn}</td>
+            <td><b>Author:</b>${data["author"]}</td>
+          </tr>
+          <tr>
+            <td><b>Rating:</b>${data["average_rating"]}</td>
+            <td><b>Year:</b>${data["year"]}</td>
+          </tr>
+          <tr>
+            <td><b>Average Review Count:</b>${data["average_reviewcount"]}</td>
+          </tr>
+        </table> `;
+
+          document.querySelector(".clearfix").innerHTML = str;
+          var msg = "";
+          var flag = false;
+
+          //check if the user has already given review or not.
+          for (let i = 0; i < data["username"].length; i++) {
+            if ((data["username"][i] === usr) && (data["isbn"][i] == bookisbn)) {
+              msg = "You have already reviewed this book. ";
+              let reviewSection = document.querySelector(".reviews");
+              reviewSection.style.display = "none";
+              flag = true;
+              console.log(flag);
+            }
           }
-          htmltext = htmltext + "</ul>"
-          $("#reviewresults").html(htmltext);
-          
+
+          //if review was not gives display review section.
+          if (flag === false) {
+            let reviewSection = document.querySelector(".reviews");
+            reviewSection.style.display = "block";
+          }
+
+          let rev_str = "";
+          //display all the reviews for that book.
+          for (let i = 0; i < data["review"].length; i++) {
+            rev_str = rev_str + `<div class="review-body"><p>
+              <b>${data["username"][i]}</b> 
+              ${data["time_stamp"][i]}<br>
+              ${data["review"][i]}</p>
+            </div>
+            <hr>`;
+          }
+
+          let all_rev = "";
+          all_rev = all_rev + `<p style="color:rgb(22, 233, 22);text-align:center;">${msg}</p> 
+          <h2 id="heading">Reviews</h2>` + rev_str;
+          document.querySelector(".reviews1").innerHTML = all_rev;
         }
-      });
- }
+      };
+    }
  </script>
  {% endblock %}
 
