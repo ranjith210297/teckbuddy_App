@@ -79,7 +79,10 @@ def allusers():
     
     return render_template("admin.html", users=user)
 
-
+@app.route("/home/<username>")
+def home(username):
+	if "username" in session:
+		return render_template("userHome.html",user=username)
 
 
 
@@ -94,7 +97,7 @@ def auth():
         if userData is not None:
             if userData.Username == username and userData.Password == passwd:
                 session["username"] = username
-                return render_template('userHome.html', user=username)
+                return redirect(url_for("home",username=username))
             else:
                 return render_template("Registration.html", message="username/password is incorrect!!")
         else:
