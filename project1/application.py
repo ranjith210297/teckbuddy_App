@@ -57,7 +57,6 @@ def register():
                         Email=email, Gender=gender,Password=password,Cpassword=cpassword, Time_registered=time.ctime(time.time()))
 			db.session.add(user)
 			db.session.commit()
-			session["username"] = username
 			return render_template("userDetails.html")
 	else:
 
