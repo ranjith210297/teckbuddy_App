@@ -64,6 +64,13 @@ hr {
 
 
 
+.usermessage,
+.passmessage,
+.emailmessage,
+.cpassmessage,
+.gendermessage {
+    font-size: 20px;
+}
 
 
 .registerbtn:hover {
@@ -96,3 +103,30 @@ a {
     box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.26);
 }
 
+li {list-style-type: none;
+font-size: 16pt;
+}
+.mail {
+margin: auto;
+padding-top: 10px;
+padding-bottom: 10px;
+width: 400px;
+background : #D8F1F8;
+border: 1px soild silver;
+}
+.mail h2 {
+margin-left: 38px;
+}
+input {
+font-size: 20pt;
+}
+input:focus, textarea:focus{
+background-color: lightyellow;
+}
+input submit {
+font-size: 12pt;
+}
+.rq {
+color: #FF0000;
+font-size: 10pt;
+}
